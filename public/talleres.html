@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talleres · Bee Green</title>
+<meta name="description" content="Talleres para construir hoteles para abejas en Costa Rica: abiertos, para empresas, escuelas y grupos.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script src="/js/cards.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Aprender haciendo</span><h1>Talleres Bee Green</h1><p class="lead" style="margin-inline:auto">Armamos hoteles para abejas mientras aprendemos sobre las polinizadoras nativas de Costa Rica.</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container">
+  <div class="grid grid-3" id="grid"></div>
+  <div class="grid grid-3" style="margin-top:56px">
+    <div class="feature panel reveal d1"><h3>🏢 Empresas</h3><p class="muted">Actividades de equipo y RSE con hoteles que luego aparecen en el mapa con su logo.</p></div>
+    <div class="feature panel reveal d2"><h3>🏫 Escuelas y colegios</h3><p class="muted">Educación ambiental práctica: cada grupo arma su hotel para el jardín de la institución.</p></div>
+    <div class="feature panel reveal d3"><h3>👨‍👩‍👧 Familias y grupos</h3><p class="muted">Cumpleaños, grupos comunales y ferias. Llevamos todos los materiales.</p></div>
+  </div>
+  <div class="center" style="margin-top:40px"><a class="btn" style="background:#25d366" href="#" data-wa="¡Hola Bee Green! Quiero cotizar un taller privado 🐝">Cotizar un taller privado por WhatsApp</a></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const products = (await BG.api('/api/products').catch(() => [])).filter((p) => p.category === 'Talleres');
+grid.innerHTML = products.map(productCard).join('') || '<p class="muted">Pronto publicaremos nuevas fechas. Escríbenos para enterarte primero.</p>';
+grid.querySelectorAll('[data-add]').forEach((b) => b.onclick = () => BG.cart.add(products.find((p) => p.id == b.dataset.add)));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bee Green · Hoteles para abejas en Costa Rica</title>
+<meta name="description" content="Hoteles para abejas domésticos y empresariales, kits y talleres en Costa Rica. Coloca el tuyo, márcalo en el mapa y forma parte de la comunidad Bee Green.">
+<meta property="og:title" content="Bee Green · Hoteles para abejas">
+<meta property="og:description" content="Coloca tu hotel de abejas y márcalo en el mapa de la comunidad.">
+<meta property="og:image" content="/img/og.svg">
+<link rel="icon" href="/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/vendor/leaflet/leaflet.js" defer></script>
+<script src="/js/common.js" defer></script>
+<script src="/js/cards.js" defer></script>
+</head>
+<body>
+<main>
+  <!-- HERO -->
+  <section class="hero2" data-bees="18">
+    <img class="mascot sleep" src="/img/mascota-durmiendo.svg" alt="">
+    <img class="mascot wave" src="/img/mascota-saluda.svg" alt="">
+    <img class="mascot sit" src="/img/mascota-sentada.svg" alt="">
+    <div class="cloud-bubble b-right"><strong>¿Pican?</strong><em>(casi nunca)</em>Las abejas solitarias no tienen colmena que defender. Son súper tranquilas, ideales para casas con niños y mascotas.</div>
+    <div class="cloud-bubble b-left"><strong>Tu hotel en el mapa</strong>Cada hotel trae un código para marcarlo en el mapa de la comunidad.</div>
+    <div class="container">
+      <div class="hero2-title">
+        <svg class="arc" viewBox="0 0 560 150" aria-hidden="true"><path id="arcPath" d="M30 140 Q280 -10 530 140" fill="none"/><text><textPath href="#arcPath" startOffset="50%" text-anchor="middle">CONOCE NUESTROS</textPath></text></svg>
+        <h1>Hoteles<span class="script">para abejas</span></h1>
+        <p class="sub">Dale un hogar a las polinizadoras de Costa Rica 🇨🇷</p>
+      </div>
+      <div class="hero2-products" id="heroProducts"></div>
+      <div class="hero-stats" style="justify-content:center;margin-top:48px">
+        <div class="center"><strong id="statHotels">0</strong><span>hoteles en el mapa</span></div>
+        <div class="center"><strong id="statBees">0</strong><span>abejas con hogar*</span></div>
+        <div class="center"><strong id="statCities">0</strong><span>lugares</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="honeycomb-divider"></div>
+
+  <!-- POR QUÉ -->
+  <section class="section">
+    <div class="container center">
+      <span class="eyebrow reveal">¿Por qué un hotel de abejas?</span>
+      <h2 class="reveal">Pequeños refugios, un impacto enorme</h2>
+      <p class="lead reveal">La mayoría de las especies de abejas son solitarias: no viven en colmenas, no hacen miel y casi nunca pican. Pero sin ellas, muchas de nuestras frutas y flores no existirían.</p>
+      <div class="grid grid-3" style="margin-top:40px">
+        <div class="feature reveal d1">
+          <svg class="icon" viewBox="0 0 84 84"><circle cx="42" cy="42" r="40" fill="#d6e7e1"/><path d="M42 18c12 8 15 22 7 36-9-4-14-12-14-22 0-6 3-11 7-14z" fill="#193f3a"/><path d="M42 22v40" stroke="#d6e7e1" stroke-width="3"/></svg>
+          <h3>Biodiversidad</h3><p class="muted">Las abejas solitarias polinizan frutales, hortalizas y plantas silvestres de nuestros bosques y ciudades.</p>
+        </div>
+        <div class="feature reveal d2">
+          <svg class="icon" viewBox="0 0 84 84"><circle cx="42" cy="42" r="40" fill="#f6e2b0"/><path d="M42 20c-9 0-16 7-16 16 0 12 16 28 16 28s16-16 16-28c0-9-7-16-16-16z" fill="#e1aa2a" stroke="#1b2422" stroke-width="3"/><circle cx="42" cy="36" r="6" fill="#fff"/></svg>
+          <h3>Comunidad</h3><p class="muted">Cada hotel registrado aparece en el mapa. Mira cómo crece la red de refugios en tu ciudad.</p>
+        </div>
+        <div class="feature reveal d3">
+          <svg class="icon" viewBox="0 0 84 84"><circle cx="42" cy="42" r="40" fill="#e9d6f5"/><path d="M28 50c0-10 6-18 14-18s14 8 14 18" fill="none" stroke="#1b2422" stroke-width="3.5"/><circle cx="34" cy="38" r="3" fill="#1b2422"/><circle cx="50" cy="38" r="3" fill="#1b2422"/><path d="M34 52c4 4 12 4 16 0" stroke="#1b2422" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
+          <h3>Seguras y pacíficas</h3><p class="muted">Ideales para casas con niños, escuelas y oficinas. <a href="#" data-open-bot>¿Tienes dudas? Pregúntale a Abi.</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS DESTACADOS -->
+  <section class="section shop-bg" data-bees="12">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:16px;margin-bottom:32px">
+        <div><span class="eyebrow">La tienda</span><h2 style="margin:0">Hoteles, kits y talleres</h2></div>
+        <a class="btn ghost" href="/tienda">Ver toda la tienda</a>
+      </div>
+      <div class="grid grid-3" id="featured"></div>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="section" id="mapa">
+    <div class="container">
+      <div class="center">
+        <span class="eyebrow reveal">La colmena Bee Green</span>
+        <h2 class="reveal">Mira todos los hoteles de la comunidad</h2>
+        <p class="lead reveal">Cada pin es un refugio colocado por alguien como tú. Las empresas que se suman aparecen con su logo.</p>
+      </div>
+      <div id="homeMap" class="map reveal" style="margin-top:32px"></div>
+      <div class="map-legend"><span><i style="background:#e1aa2a"></i>Hoteles de la comunidad</span><span><i style="background:#fff;border:3px solid #193f3a"></i>Empresas e instituciones</span></div>
+      <div class="center" style="margin-top:24px"><a class="btn" href="/registra-tu-hotel">Añadir mi hotel al mapa</a></div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="section green">
+    <div class="container">
+      <div class="center"><span class="eyebrow" style="color:var(--honey)">Cómo funciona</span><h2>De tu casa al mapa en 3 pasos</h2></div>
+      <div class="grid grid-3 steps" style="margin-top:48px;color:var(--ink)">
+        <div class="step reveal d1"><h3>Consigue tu hotel</h3><p class="muted">Elige el modelo que mejor encaje en tu balcón, jardín, escuela u oficina, o ármalo con nuestro kit.</p></div>
+        <div class="step reveal d2"><h3>Colócalo al sol</h3><p class="muted">Donde le dé el sol de la mañana, protegido de la lluvia, a más de un metro del suelo y con flores cerca.</p></div>
+        <div class="step reveal d3"><h3>Márcalo en el mapa</h3><p class="muted">Usa el código que viene con tu hotel, sube una foto y aparece en la comunidad.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTICIAS -->
+  <section class="section">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:16px;margin-bottom:32px">
+        <div><span class="eyebrow">Noticias y participaciones</span><h2 style="margin:0">Lo último en la colmena</h2></div>
+        <a class="btn ghost" href="/noticias">Ver todas</a>
+      </div>
+      <div class="grid grid-3" id="latestPosts"></div>
+    </div>
+  </section>
+
+  <!-- EMPRESAS -->
+  <section class="section alt">
+    <div class="container">
+      <div class="cta-band reveal">
+        <div>
+          <span class="eyebrow" style="color:var(--honey)">Para empresas e instituciones</span>
+          <h2>Tu logo en el mapa de la biodiversidad</h2>
+          <p style="opacity:.9">Coloquen hoteles en su oficina, hotel, finca, centro educativo o evento. Con un código de empresa, cada hotel aparece en el mapa con su logo: una forma visible y real de cuidar el entorno. También damos talleres para equipos.</p>
+          <div class="btn-row"><a class="btn honey" href="#" data-wa="¡Hola Bee Green! Quiero información para empresas 🐝">Hablemos por WhatsApp</a><a class="btn white" href="/talleres">Ver talleres</a></div>
+        </div>
+        <svg viewBox="0 0 300 220" aria-hidden="true">
+          <rect x="20" y="30" width="260" height="170" rx="18" fill="#d6e7e1"/>
+          <path d="M20 120 Q 90 80 150 130 T 280 110" stroke="#fff" stroke-width="10" fill="none"/>
+          <path d="M60 30 Q 100 120 80 200" stroke="#fff" stroke-width="6" fill="none"/>
+          <g class="float"><circle cx="150" cy="95" r="34" fill="#fff" stroke="#12302c" stroke-width="5"/><text x="150" y="104" text-anchor="middle" font-family="Fraunces, serif" font-weight="700" font-size="24" fill="#193f3a">LOGO</text></g>
+          <g class="float d2"><path d="M80 150c-10 0-18 8-18 18 0 13 18 30 18 30s18-17 18-30c0-10-8-18-18-18z" fill="#e1aa2a" stroke="#12302c" stroke-width="4"/></g>
+          <g class="float d3"><path d="M230 140c-10 0-18 8-18 18 0 13 18 30 18 30s18-17 18-30c0-10-8-18-18-18z" fill="#e1aa2a" stroke="#12302c" stroke-width="4"/></g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- DUDAS -->
+  <section class="section">
+    <div class="container" style="max-width:820px">
+      <div class="center"><span class="eyebrow">Dudas frecuentes</span><h2>¿Las abejas pican? ¿Y si tengo niños?</h2><p class="lead">Resolvemos las dudas más comunes. Y si la tuya no está, pregúntale a Abi, nuestra abeja asistente.</p></div>
+      <div id="faqTeaser" style="margin-top:32px"></div>
+      <div class="center" style="margin-top:24px"><button class="btn honey" data-open-bot>Preguntarle a Abi</button></div>
+    </div>
+  </section>
+  <p class="container muted" style="font-size:.8rem">* Estimación de unas 350 abejas por hotel a lo largo de su vida útil.</p>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const { api, esc, eur, date } = BG;
+  api('/api/stats').then((s) => {
+    [[statHotels, s.hotels], [statBees, s.bees], [statCities, s.cities]].forEach(([el, end]) => {
+      const t0 = performance.now();
+      const step = (t) => { const k = Math.min(1, (t - t0) / 1600); el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))).toLocaleString('es-ES'); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+  });
+  const products = await api('/api/products').catch(() => []);
+  const hero = (products.filter((p) => p.featured).length >= 3 ? products.filter((p) => p.featured) : products).slice(0, 3);
+  heroProducts.innerHTML = hero.map((p) => `<div class="hp"><a class="pic" href="/producto?p=${encodeURIComponent(p.slug)}"><img src="${esc(p.image || '/img/hotel-placeholder.svg')}" alt="${esc(p.name)}">${p.discount_percent ? `<span class="hex-badge">-${p.discount_percent}%<small>DESC.</small></span>` : `<span class="hex-badge">🐝<small>${esc(p.category.split(' ')[0].toUpperCase())}</small></span>`}</a>
+    <small>${esc(p.category)}</small><h3>${esc(p.name)}</h3><span class="price">${eur(p.final_cents)}</span><a class="btn navy small" href="/producto?p=${encodeURIComponent(p.slug)}">Comprar ahora</a></div>`).join('');
+  featured.innerHTML = products.slice(0, 6).map(productCard).join('') || '<p class="muted">Pronto habrá productos aquí.</p>';
+  featured.querySelectorAll('[data-add]').forEach((b) => b.onclick = () => BG.cart.add(products.find((p) => p.id == b.dataset.add)));
+
+  const posts = await api('/api/posts?limit=3').catch(() => []);
+  latestPosts.innerHTML = posts.map(postCard).join('') || '<p class="muted">Aún no hay publicaciones.</p>';
+
+  const full = (await api('/api/faqs').catch(() => [])).slice(0, 4);
+  faqTeaser.innerHTML = full.map((f) => `<details class="faq"><summary>${esc(f.question)}</summary><p>${esc(f.answer)}</p></details>`).join('');
+
+  BG.hotelMap(document.getElementById('homeMap'));
+});
+</script>
+</body>
+</html>

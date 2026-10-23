@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tienda · Bee Green</title>
+<meta name="description" content="Hoteles para abejas domésticos y empresariales, kits de semillas, kits para armar y talleres en Costa Rica.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+<script src="/js/cards.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Tienda</span><h1>Hoteles, kits y talleres</h1><p class="lead" style="margin-inline:auto">Cada hotel y kit incluye un código para marcarlo en el mapa de la comunidad.</p></div></section>
+<section class="section shop-bg" data-bees="20" style="padding-top:20px;background:linear-gradient(var(--cream), var(--cream-2))"><div class="container">
+  <div class="filters" id="filters"></div>
+  <div class="grid grid-3" id="grid"><p class="muted">Cargando…</p></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const products = await BG.api('/api/products').catch(() => []);
+const cats = ['Todo', ...new Set(products.map((p) => p.category))];
+let current = new URLSearchParams(location.search).get('c') || 'Todo';
+function render() {
+  filters.innerHTML = cats.map((c) => `<button class="${c === current ? 'active' : ''}" data-c="${BG.esc(c)}">${BG.esc(c)}</button>`).join('');
+  filters.querySelectorAll('button').forEach((b) => b.onclick = () => { current = b.dataset.c; render(); });
+  const list = products.filter((p) => current === 'Todo' || p.category === current);
+  grid.innerHTML = list.map(productCard).join('') || '<p class="muted">No hay productos en esta categoría.</p>';
+  grid.querySelectorAll('[data-add]').forEach((b) => b.onclick = () => BG.cart.add(products.find((p) => p.id == b.dataset.add)));
+}
+render();
+});
+</script>
+</body>
+</html>

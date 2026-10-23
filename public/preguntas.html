@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preguntas frecuentes · Bee Green</title>
+<meta name="description" content="¿Las abejas solitarias pican? Resolvemos todas tus dudas sobre los hoteles de abejas.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Sin miedo</span><h1>Todas tus dudas sobre las abejas</h1><p class="lead" style="margin-inline:auto">Spoiler: las abejas solitarias son súper tranquilas.</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container" style="max-width:820px">
+  <div id="list"></div>
+  <div class="panel center" style="margin-top:40px"><img src="/img/bee.svg" class="float" style="width:70px;margin:0 auto" alt=""><h3>¿No encuentras tu duda?</h3><p class="muted">Pregúntale a Abi, nuestra abeja asistente, o escríbenos directamente.</p><div class="btn-row" style="justify-content:center"><button class="btn honey" data-open-bot>Preguntar a Abi</button><a class="btn" style="background:#25d366" href="#" data-wa="Hola, tengo una duda sobre los hoteles de abejas">WhatsApp</a></div></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const faqs = await BG.api('/api/faqs').catch(() => []);
+list.innerHTML = faqs.map((f, i) => `<details class="faq" ${i === 0 ? 'open' : ''}><summary>${BG.esc(f.question)}</summary><p>${BG.esc(f.answer)}</p></details>`).join('');
+});
+</script>
+</body>
+</html>

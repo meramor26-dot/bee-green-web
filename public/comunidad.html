@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa de la comunidad · Bee Green</title>
+<meta name="description" content="Todos los hoteles de abejas de la comunidad Bee Green en un mapa.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/vendor/leaflet/leaflet.js" defer></script>
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">La colmena</span><h1>Mapa de la comunidad</h1><p class="lead" style="margin-inline:auto">Cada pin es un hotel de abejas colocado por alguien de la comunidad. ¿Dónde está el tuyo?</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container">
+  <div class="hero-stats" style="justify-content:center;margin:0 0 28px"><div><strong id="sH">0</strong><span>hoteles</span></div><div><strong id="sC">0</strong><span>ciudades</span></div><div><strong id="sE">0</strong><span>empresas y colegios</span></div></div>
+  <div id="bigMap" class="map" style="height:620px"></div>
+  <div class="map-legend"><span><i style="background:#f4b63f"></i>Hoteles de la comunidad</span><span><i style="background:#fff;border:3px solid #2f6b3a"></i>Empresas y colegios</span></div>
+  <div class="center" style="margin:32px 0 56px"><a class="btn honey" href="/registra-tu-hotel">Añadir mi hotel</a></div>
+  <h2 class="center">Últimos hoteles registrados</h2>
+  <div class="grid grid-4" id="gallery" style="margin-top:24px"></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const { esc, date } = BG;
+const { map, hotels } = await BG.hotelMap(bigMap);
+BG.api('/api/stats').then((s) => { sH.textContent = s.hotels; sC.textContent = s.cities; sE.textContent = s.companies; });
+gallery.innerHTML = hotels.slice(0, 12).map((h) => `<article class="card" style="cursor:pointer" data-lat="${h.lat}" data-lng="${h.lng}">
+  <div class="thumb">${h.photo ? `<img src="${esc(h.photo)}" alt="" loading="lazy">` : `<img src="/img/hotel-placeholder.svg" alt="">`}${h.logo ? `<span class="corner" style="position:absolute;top:10px;left:10px;background:#fff;border-radius:10px;padding:4px"><img src="${esc(h.logo)}" alt="" style="height:30px;width:auto"></span>` : ''}</div>
+  <div class="card-body"><strong>${esc(h.company_name || h.name)}</strong><small class="muted">${esc(h.city || '')} · ${date(h.created_at)}</small>${h.message ? `<small>“${esc(h.message)}”</small>` : ''}</div></article>`).join('') || '<p class="muted">Todavía no hay hoteles. ¡Sé la primera persona!</p>';
+gallery.querySelectorAll('[data-lat]').forEach((c) => c.onclick = () => { map.flyTo([c.dataset.lat, c.dataset.lng], 13); bigMap.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+});
+</script>
+</body>
+</html>

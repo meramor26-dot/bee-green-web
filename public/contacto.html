@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contacto · Bee Green</title>
+<meta name="description" content="Escríbenos por WhatsApp o correo.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Hablemos</span><h1>Contacto</h1><p class="lead" style="margin-inline:auto">Para pedidos, empresas, escuelas, talleres o cualquier duda. Respondemos rapidísimo por WhatsApp.</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container grid grid-2" style="align-items:start">
+  <div class="panel center">
+    <div class="wa-float" style="position:static;margin:0 auto 16px;width:80px;height:80px" aria-hidden="true"></div>
+    <h3>WhatsApp directo</h3><p class="muted">La forma más rápida de hablar con nosotros.</p>
+    <a class="btn" style="background:#25d366" href="#" data-wa>Abrir WhatsApp</a>
+    <p style="margin-top:24px" id="emailLine" class="muted"></p>
+  </div>
+  <form class="panel form" id="contactForm">
+    <h3>O déjanos un mensaje</h3>
+    <label>Nombre<input name="name" required></label>
+    <label>Correo<input type="email" name="email" required></label>
+    <label>Mensaje<textarea name="message" rows="5" required></textarea></label>
+    <label class="check"><input type="checkbox" required> Acepto la <a href="/privacidad" target="_blank">política de privacidad</a></label>
+    <button class="btn honey">Enviar mensaje</button>
+  </form>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+document.querySelector('.panel .wa-float').innerHTML = BG.WA;
+BG.settingsReady.then((s) => { if (s.email) emailLine.innerHTML = `También en <a href="mailto:${BG.esc(s.email)}">${BG.esc(s.email)}</a>`; });
+contactForm.onsubmit = async (e) => {
+  e.preventDefault();
+  try { await BG.api('/api/contact', { method: 'POST', body: Object.fromEntries(new FormData(contactForm)) }); contactForm.reset(); BG.toast('¡Mensaje enviado! Te responderemos pronto 🐝'); }
+  catch (x) { BG.toast(x.message); }
+};
+});
+</script>
+</body>
+</html>

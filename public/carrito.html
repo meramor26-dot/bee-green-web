@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrito · Bee Green</title>
+<meta name="description" content="Tu carrito de Bee Green.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Tu pedido</span><h1>Carrito</h1></div></section>
+<section class="section" style="padding-top:10px"><div class="container">
+  <div id="done" class="hidden panel center" style="max-width:640px;margin:auto"></div>
+  <div class="grid" id="cartWrap" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;gap:32px">
+    <div class="panel"><h3>Productos</h3><div id="lines"></div>
+      <form id="couponForm" style="display:flex;gap:8px;margin-top:20px"><input name="code" placeholder="¿Tienes un cupón de descuento?" aria-label="Cupón"><button class="btn small ghost">Aplicar</button></form>
+      <p id="couponMsg" class="muted" style="margin-top:8px"></p>
+      <div class="totals" id="totals" style="margin-top:12px"></div>
+    </div>
+    <div class="panel"><h3>Datos de envío</h3>
+      <form class="form" id="checkout">
+        <label>Nombre y apellidos<input name="name" required autocomplete="name"></label>
+        <div class="row"><label>Correo<input type="email" name="email" required autocomplete="email"></label><label>Teléfono / WhatsApp<input name="phone" required autocomplete="tel" placeholder="8888 8888"></label></div>
+        <div class="row"><label>Provincia<select name="city" required><option value="">Elige…</option><option>San José</option><option>Alajuela</option><option>Cartago</option><option>Heredia</option><option>Guanacaste</option><option>Puntarenas</option><option>Limón</option></select></label><label>Cantón y distrito<input name="postal_code" required placeholder="Ej.: Escazú, San Rafael"></label></div>
+        <label>Dirección exacta (otras señas)<textarea name="address" rows="2" required placeholder="Ej.: 200 m norte de la iglesia, casa verde de portón negro"></textarea></label>
+        <label>Notas (opcional)<textarea name="notes" rows="2"></textarea></label>
+        <label class="check"><input type="checkbox" required> Acepto la <a href="/privacidad" target="_blank">política de privacidad</a> y las <a href="/envios" target="_blank">condiciones de envío</a></label>
+        <h3 style="margin:8px 0 0">Método de pago</h3>
+        <div class="pay-options" id="payOptions"></div>
+        <p id="err" class="alert error hidden"></p>
+        <button class="btn honey" id="submitBtn">Confirmar pedido</button>
+      </form>
+    </div>
+  </div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const { esc, eur, api, cart } = BG;
+await BG.settingsReady;
+const s = BG.settings;
+const payText = { sinpe: 'Pagas al número de SINPE Móvil y nos envías el comprobante.', transferencia: 'Transfieres a nuestra cuenta IBAN y nos envías el comprobante.', tarjeta: 'Pagas con tarjeta de forma segura.' };
+payOptions.innerHTML = (s.payments || []).map((m, i) => `<label class="pay-option"><input type="radio" name="payment_method" value="${m.id}" ${i === 0 ? 'checked' : ''} required><span>${esc(m.label)}<small>${payText[m.id] || ''}</small></span></label>`).join('');
+function payDetails(m, r) {
+  const ref = `Pedido #${r.order_id}`;
+  if (m.id === 'sinpe') return `<dl class="pay-box"><dt>SINPE Móvil</dt><dd>${esc(m.number)}${m.name ? ` · a nombre de ${esc(m.name)}` : ''}</dd><dt>Monto</dt><dd>${eur(r.total_cents)}</dd><dt>Descripción</dt><dd>${ref}</dd></dl>`;
+  if (m.id === 'transferencia') return `<dl class="pay-box"><dt>Banco</dt><dd>${esc(m.bank)}</dd><dt>Cuenta IBAN</dt><dd>${esc(m.iban)}</dd><dt>Titular</dt><dd>${esc(m.holder)}</dd><dt>Monto</dt><dd>${eur(r.total_cents)}</dd><dt>Descripción</dt><dd>${ref}</dd></dl>`;
+  return m.link ? `<a class="btn indigo" href="${esc(m.link)}" target="_blank" rel="noopener">Pagar con tarjeta</a>` : `<p class="pay-box">Te enviaremos un enlace de pago seguro con tarjeta por WhatsApp o correo en los próximos minutos.</p>`;
+}
+let coupon = null;
+function totals() {
+  const items = cart.get();
+  const sub = items.reduce((a, i) => a + i.final_cents * i.qty, 0);
+  const disc = coupon && sub >= (coupon.min_cents || 0) ? Math.round(sub * coupon.percent / 100) : 0;
+  const ship = s.free_shipping_from_cents && sub - disc >= s.free_shipping_from_cents ? 0 : s.shipping_cents;
+  return { items, sub, disc, ship: items.length ? ship : 0, total: sub - disc + (items.length ? ship : 0) };
+}
+function render() {
+  const t = totals();
+  if (!t.items.length) { cartWrap.innerHTML = '<div class="panel center" style="grid-column:1/-1"><h3>Tu carrito está vacío</h3><p class="muted">¡Las abejas esperan su hotel!</p><a class="btn honey" href="/tienda">Ir a la tienda</a></div>'; return; }
+  lines.innerHTML = t.items.map((i) => `<div class="cart-line"><img src="${esc(i.image || '')}" alt=""><div><strong>${esc(i.name)}</strong><br><span class="muted">${eur(i.final_cents)}</span></div>
+    <div style="text-align:right"><div class="qty"><button data-m="${i.id}" aria-label="Menos">−</button><span>${i.qty}</span><button data-p="${i.id}" aria-label="Más">+</button></div><br><small>${eur(i.final_cents * i.qty)}</small></div></div>`).join('');
+  lines.querySelectorAll('[data-m]').forEach((b) => b.onclick = () => { const i = cart.get().find((x) => x.id == b.dataset.m); cart.setQty(i.id, i.qty - 1); render(); });
+  lines.querySelectorAll('[data-p]').forEach((b) => b.onclick = () => { const i = cart.get().find((x) => x.id == b.dataset.p); cart.setQty(i.id, Math.min(99, i.qty + 1)); render(); });
+  const left = s.free_shipping_from_cents - (t.sub - t.disc);
+  totals_.innerHTML = `<div><span>Subtotal</span><span>${eur(t.sub)}</span></div>${t.disc ? `<div><span>Descuento (${esc(coupon.code)})</span><span>−${eur(t.disc)}</span></div>` : ''}
+    <div><span>Envío</span><span>${t.ship ? eur(t.ship) : 'Gratis'}</span></div>${t.ship && left > 0 ? `<small class="muted">Te faltan ${eur(left)} para el envío gratis</small>` : ''}<div class="total"><span>Total</span><span>${eur(t.total)}</span></div>`;
+}
+const totals_ = document.getElementById('totals');
+render();
+couponForm.onsubmit = async (e) => {
+  e.preventDefault();
+  try { coupon = await api('/api/coupons/check', { method: 'POST', body: { code: couponForm.code.value } }); couponMsg.textContent = `✅ Cupón aplicado: ${coupon.percent}% de descuento`; }
+  catch (err) { coupon = null; couponMsg.textContent = err.message; }
+  render();
+};
+checkout.onsubmit = async (e) => {
+  e.preventDefault(); err.classList.add('hidden'); submitBtn.disabled = true;
+  const data = Object.fromEntries(new FormData(checkout));
+  try {
+    const r = await api('/api/orders', { method: 'POST', body: { ...data, coupon: coupon?.code, items: cart.get().map((i) => ({ id: i.id, qty: i.qty })) } });
+    cart.clear();
+    const text = `¡Hola Bee Green! Acabo de hacer el pedido #${r.order_id} 🐝\n` + r.items.map((i) => `• ${i.qty} × ${i.name}`).join('\n') + `\nTotal: ${eur(r.total_cents)}\nPago: ${r.payment.label}\nNombre: ${data.name}` + (r.payment.id === 'tarjeta' ? '' : '\nAdjunto el comprobante 👇');
+    cartWrap.classList.add('hidden'); done.classList.remove('hidden');
+    done.innerHTML = `<img src="/img/bee.svg" alt="" style="width:80px;margin:0 auto" class="float"><h2>¡Pedido #${r.order_id} recibido!</h2><p class="lead" style="margin-inline:auto">Gracias, ${esc(data.name)}. Total: <strong>${eur(r.total_cents)}</strong>. ${r.payment.id === 'tarjeta' ? '' : 'Para completar tu compra, haz el pago y envíanos el comprobante por WhatsApp.'}</p>
+      ${payDetails(r.payment, r)}
+      <div class="btn-row" style="justify-content:center;margin-top:20px"><a class="btn" style="background:#25d366" target="_blank" rel="noopener" href="${BG.waLink(text)}">${r.payment.id === 'tarjeta' ? 'Confirmar por WhatsApp' : 'Enviar comprobante por WhatsApp'}</a><a class="btn ghost" href="/registra-tu-hotel">Cómo registrar mi hotel</a></div>`;
+    scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (x) { err.textContent = x.message; err.classList.remove('hidden'); }
+  submitBtn.disabled = false;
+};
+});
+</script>
+</body>
+</html>

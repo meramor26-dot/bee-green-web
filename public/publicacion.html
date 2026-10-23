@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Publicación · Bee Green</title>
+<meta name="description" content="Noticias de Bee Green.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="section"><div class="container"><div class="post-body" id="post"><p class="muted">Cargando…</p></div></div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const { esc, date, paragraphs, api } = BG;
+try {
+  const p = await api('/api/posts/' + encodeURIComponent(new URLSearchParams(location.search).get('p')));
+  document.title = p.title + ' · Bee Green';
+  post.innerHTML = `<p><a href="/noticias">← Noticias y participaciones</a></p><span class="badge ${p.type === 'noticia' ? '' : 'green'}">${p.type === 'noticia' ? 'Noticia' : 'Participación'}</span> <small class="muted">${date(p.created_at)}</small>
+    <h1 style="margin-top:12px">${esc(p.title)}</h1>${p.excerpt ? `<p class="lead">${esc(p.excerpt)}</p>` : ''}${p.image ? `<img class="cover" src="${esc(p.image)}" alt="">` : ''}${paragraphs(p.body)}
+    <div class="alert honey" style="margin-top:32px">¿Quieres que Bee Green participe en tu escuela, colegio, empresa o evento? <a href="#" data-wa="¡Hola! Me gustaría que Bee Green participara en…">Escríbenos por WhatsApp</a></div>`;
+  BG.settingsReady.then(() => document.querySelectorAll('[data-wa]').forEach((a) => { a.href = BG.waLink(a.dataset.wa); a.target = '_blank'; }));
+} catch (e) { post.innerHTML = `<div class="alert error">${esc(e.message)}</div><p><a href="/noticias">Ver todas las publicaciones</a></p>`; }
+});
+</script>
+</body>
+</html>

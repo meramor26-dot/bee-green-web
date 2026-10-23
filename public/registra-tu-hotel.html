@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registra tu hotel · Bee Green</title>
+<meta name="description" content="Escribe el código de tu hotel Bee Green, márcalo en el mapa y sube una foto.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/vendor/leaflet/leaflet.js" defer></script>
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Únete al mapa</span><h1>Registra tu hotel</h1><p class="lead" style="margin-inline:auto">Escribe el código que viene con tu hotel, marca dónde lo colocaste y comparte una foto.</p></div></section>
+<section class="section" style="padding-top:10px"><div class="container" style="max-width:860px">
+  <div class="panel" id="step1">
+    <h3>1. Tu código</h3>
+    <p class="muted">Lo encontrarás en la tarjeta que viene dentro de la caja de tu hotel (por ejemplo <strong>BG-XXXXXX</strong>). Las empresas tienen códigos que empiezan por <strong>EMP-</strong>.</p>
+    <form id="codeForm" style="display:flex;gap:10px;flex-wrap:wrap"><input name="code" placeholder="BG-XXXXXX" required style="flex:1;min-width:200px;text-transform:uppercase;letter-spacing:.1em;font-weight:800" aria-label="Código"><button class="btn">Comprobar</button></form>
+    <p id="codeMsg" style="margin-top:12px"></p>
+  </div>
+
+  <form class="panel form hidden" id="hotelForm" style="margin-top:24px">
+    <div id="companyBox" class="alert honey hidden"></div>
+    <h3>2. ¿Dónde lo colocaste?</h3>
+    <p class="muted" style="margin:0">Toca el mapa, busca tu dirección o usa tu ubicación. No hace falta que sea exacto: puedes marcar la zona.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="search" placeholder="Busca una dirección o ciudad" style="flex:1;min-width:200px" aria-label="Buscar dirección"><button type="button" class="btn small ghost" id="searchBtn">Buscar</button><button type="button" class="btn small ghost" id="locBtn">📍 Mi ubicación</button></div>
+    <div id="pickMap" class="map small"></div>
+    <p id="pickMsg" class="muted" style="margin:0">Todavía no has marcado ningún punto.</p>
+    <h3 style="margin-top:12px">3. Cuéntanos un poco</h3>
+    <div class="row"><label><span id="nameLabel">Tu nombre (o apodo)</span><input name="name" required maxlength="120"></label><label>Ciudad o barrio<input name="city" maxlength="120"></label></div>
+    <label id="companyField" class="hidden">Nombre de la empresa<input name="company_name" maxlength="120"></label>
+    <label>Un mensaje para la comunidad (opcional)<input name="message" maxlength="200" placeholder="¡Ya llegaron las inquilinas!"></label>
+    <label>Correo (opcional, no se publica)<input type="email" name="email"></label>
+    <div class="row">
+      <div><strong>Foto del hotel</strong><label class="dropzone" style="margin-top:6px"><span>📷 Elige o arrastra una foto</span><input type="file" name="photo" accept="image/*" hidden data-preview="photoPrev"><img id="photoPrev" class="hidden" alt=""></label></div>
+      <div id="logoBox" class="hidden"><strong>Logo de la empresa</strong><label class="dropzone" style="margin-top:6px"><span>🏷️ Sube el logo (PNG o SVG)</span><input type="file" name="logo" accept="image/*" hidden data-preview="logoPrev"><img id="logoPrev" class="hidden" alt=""></label></div>
+    </div>
+    <label class="check"><input type="checkbox" required> Acepto que mi nombre, foto y ubicación aproximada se muestren en el mapa público (<a href="/privacidad" target="_blank">privacidad</a>).</label>
+    <p id="err" class="alert error hidden"></p>
+    <button class="btn honey" id="sendBtn">Añadir mi hotel al mapa</button>
+  </form>
+  <div class="panel center hidden" id="done" style="margin-top:24px"></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const { esc, api } = BG;
+let code = null, marker = null, map = null, point = null;
+const qs = new URLSearchParams(location.search).get('codigo');
+if (qs) { codeForm.code.value = qs; }
+codeForm.onsubmit = async (e) => {
+  e.preventDefault(); codeMsg.className = ''; codeMsg.textContent = 'Comprobando…';
+  try {
+    code = await api('/api/codes/' + encodeURIComponent(codeForm.code.value.trim()));
+    codeMsg.className = 'alert'; codeMsg.textContent = code.type === 'empresa' ? '✅ Código de empresa válido. El hotel aparecerá en el mapa con el logo de su empresa.' : '✅ ¡Código válido! Sigue con el paso 2.';
+    hotelForm.classList.remove('hidden');
+    const isCo = code.type === 'empresa';
+    [companyField, logoBox].forEach((el) => el.classList.toggle('hidden', !isCo));
+    nameLabel.textContent = isCo ? 'Persona de contacto o equipo' : 'Tu nombre (o apodo)';
+    companyBox.classList.toggle('hidden', !isCo);
+    if (isCo) {
+      hotelForm.company_name.value = code.company_name || '';
+      companyBox.innerHTML = code.company_logo ? `<img src="${esc(code.company_logo)}" alt="" style="height:44px;display:inline-block;vertical-align:middle;margin-right:10px"> Ya tenemos el logo de su empresa. Si quieren cambiarlo, pueden subir otro abajo.` : '🏢 Código de empresa: suban su logo para que aparezca en el mapa.';
+    }
+    initMap(); hotelForm.scrollIntoView({ behavior: 'smooth' });
+  } catch (x) { codeMsg.className = 'alert error'; codeMsg.textContent = x.message; hotelForm.classList.add('hidden'); }
+};
+if (qs) codeForm.requestSubmit();
+function initMap() {
+  if (map) return setTimeout(() => map.invalidateSize(), 50);
+  map = L.map(pickMap).setView([9.85, -84.1], 8);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap · © CARTO', maxZoom: 19 }).addTo(map);
+  map.on('click', (e) => setPoint(e.latlng.lat, e.latlng.lng));
+  setTimeout(() => map.invalidateSize(), 100);
+}
+function setPoint(lat, lng, zoom) {
+  point = { lat, lng };
+  const icon = BG.hotelIcon({ logo: code.type === 'empresa' ? (logoPrev.src && !logoPrev.classList.contains('hidden') ? logoPrev.src : code.company_logo) : null });
+  if (marker) marker.setLatLng([lat, lng]).setIcon(icon); else marker = L.marker([lat, lng], { draggable: true, icon }).addTo(map).on('dragend', (e) => { const p = e.target.getLatLng(); point = { lat: p.lat, lng: p.lng }; });
+  if (zoom) map.setView([lat, lng], zoom);
+  pickMsg.textContent = '📍 ¡Marcado! Puedes arrastrar el pin para ajustarlo.';
+}
+searchBtn.onclick = async () => {
+  if (!search.value.trim()) return;
+  try {
+    const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=es&countrycodes=cr&q=' + encodeURIComponent(search.value)).then((r) => r.json());
+    if (!r[0]) return BG.toast('No encontramos esa dirección');
+    setPoint(+r[0].lat, +r[0].lon, 16);
+    if (!hotelForm.city.value) hotelForm.city.value = (r[0].display_name || '').split(',').slice(-4, -3)[0]?.trim() || '';
+  } catch { BG.toast('No se pudo buscar ahora mismo'); }
+};
+search.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); searchBtn.click(); } });
+locBtn.onclick = () => navigator.geolocation ? navigator.geolocation.getCurrentPosition((p) => setPoint(p.coords.latitude, p.coords.longitude, 16), () => BG.toast('No pudimos obtener tu ubicación')) : BG.toast('Tu navegador no permite ubicación');
+document.querySelectorAll('[data-preview]').forEach((inp) => inp.onchange = () => {
+  const img = document.getElementById(inp.dataset.preview), f = inp.files[0];
+  if (!f) return; img.src = URL.createObjectURL(f); img.classList.remove('hidden');
+  if (inp.name === 'logo' && point) setPoint(point.lat, point.lng);
+});
+document.querySelectorAll('.dropzone').forEach((dz) => {
+  dz.addEventListener('dragover', (e) => e.preventDefault());
+  dz.addEventListener('drop', (e) => { e.preventDefault(); const inp = dz.querySelector('input'); inp.files = e.dataTransfer.files; inp.onchange(); });
+});
+hotelForm.onsubmit = async (e) => {
+  e.preventDefault(); err.classList.add('hidden');
+  if (!point) { err.textContent = 'Marca en el mapa dónde has colocado tu hotel.'; err.classList.remove('hidden'); return; }
+  const fd = new FormData(hotelForm); fd.append('code', code.code); fd.append('lat', point.lat); fd.append('lng', point.lng);
+  sendBtn.disabled = true; sendBtn.textContent = 'Enviando…';
+  try {
+    const r = await api('/api/hotels', { method: 'POST', body: fd });
+    hotelForm.classList.add('hidden'); step1.classList.add('hidden'); done.classList.remove('hidden');
+    done.innerHTML = `<img src="/img/bee.svg" class="float" style="width:90px;margin:0 auto" alt=""><h2>¡Ya eres parte de la colmena!</h2><p class="lead" style="margin-inline:auto">${r.status === 'approved' ? 'Tu hotel ya aparece en el mapa.' : 'Recibimos tu hotel. Lo vamos a revisar pronto y aparecerá en el mapa de la comunidad.'}</p><a class="btn" href="/comunidad">Ver el mapa</a>`;
+    scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (x) { err.textContent = x.message; err.classList.remove('hidden'); }
+  sendBtn.disabled = false; sendBtn.textContent = 'Añadir mi hotel al mapa';
+};
+});
+</script>
+</body>
+</html>

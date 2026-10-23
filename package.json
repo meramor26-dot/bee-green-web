@@ -1,0 +1,20 @@
+{
+  "name": "bee-green",
+  "version": "1.0.0",
+  "description": "Web de Bee Green: tienda, mapa de hoteles para abejas, noticias y admin",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "leaflet": "^1.9.4",
+    "multer": "^2.5.0",
+    "three": "^0.160.0"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "private": true
+}

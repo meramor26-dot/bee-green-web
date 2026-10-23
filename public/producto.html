@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Producto · Bee Green</title>
+<meta name="description" content="Hotel para abejas Bee Green.">
+<link rel="icon" href="/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js" defer></script>
+</head>
+<body>
+<main>
+<script type="importmap">{"imports":{"three":"/vendor/three/build/three.module.js"}}</script>
+
+<section class="section"><div class="container">
+  <p><a href="/tienda">← Volver a la tienda</a></p>
+  <div id="detail"><p class="muted">Cargando…</p></div>
+</div></section>
+</main>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+const { esc, eur, api, paragraphs } = BG;
+const slug = new URLSearchParams(location.search).get('p');
+try {
+  const p = await api('/api/products/' + encodeURIComponent(slug));
+  document.title = p.name + ' · Bee Green';
+  let qty = 1;
+  const isHotel = /hotel|kit/i.test(p.category + ' ' + p.name) && !/semilla/i.test(p.category);
+  const has3d = p.show_3d && (p.model_3d || isHotel);
+  detail.innerHTML = `<div class="product-detail">
+    <div class="viewer-wrap">${has3d ? '<div class="viewer-tabs"><button class="active" data-v="photo">Foto</button><button data-v="3d">🔄 Ver en 3D</button></div>' : ''}
+      <div class="image reveal visible" id="photoView" style="margin-top:14px">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}">` : ''}</div>
+      <div id="viewer3d" class="hidden" style="margin-top:14px"></div>
+    </div>
+    <div><span class="badge green">${esc(p.category)}</span>${p.discount_percent ? ` <span class="badge">-${p.discount_percent}%</span>` : ''}
+      <h1 style="margin-top:12px">${esc(p.name)}</h1>
+      <p class="price" style="font-size:1.8rem">${eur(p.final_cents)}${p.discount_percent ? `<s>${eur(p.price_cents)}</s>` : ''}</p>
+      <div class="muted">${paragraphs(p.description || p.short || '')}</div>
+      ${p.stock > 0 ? `<div class="btn-row" style="align-items:center;margin:24px 0">
+        <div class="qty"><button id="minus" aria-label="Menos">−</button><span id="q">1</span><button id="plus" aria-label="Más">+</button></div>
+        <button class="btn honey" id="add">Añadir al carrito</button></div>
+        <p class="muted" style="font-size:.9rem">${p.stock <= 5 ? `¡Solo quedan ${p.stock}!` : 'En stock'} · Envíos a todo Costa Rica</p>` : '<p class="alert error">Agotado de momento. <a href="#" data-wa="Hola, ¿cuándo vuelven a tener ' + esc(p.name) + '?">Avísame por WhatsApp</a></p>'}
+      <div class="alert honey" style="margin-top:20px">🗺️ Incluye un código para marcar tu hotel en el <a href="/comunidad">mapa de la comunidad</a>.</div>
+    </div></div>`;
+  if (p.stock > 0) {
+    minus.onclick = () => { qty = Math.max(1, qty - 1); q.textContent = qty; };
+    plus.onclick = () => { qty = Math.min(p.stock, qty + 1); q.textContent = qty; };
+    add.onclick = () => BG.cart.add(p, qty);
+  }
+  BG.settingsReady.then(() => document.querySelectorAll('[data-wa]').forEach((a) => { a.href = BG.waLink(a.dataset.wa); a.target = '_blank'; }));
+  let mounted = false;
+  document.querySelectorAll('[data-v]').forEach((b) => b.onclick = async () => {
+    document.querySelectorAll('[data-v]').forEach((x) => x.classList.toggle('active', x === b));
+    const is3d = b.dataset.v === '3d';
+    photoView.classList.toggle('hidden', is3d); viewer3d.classList.toggle('hidden', !is3d);
+    if (is3d && !mounted) {
+      mounted = true;
+      viewer3d.innerHTML = '<span class="viewer-hint">Arrastra para girar · pellizca para acercar</span>';
+      const { mountViewer } = await import('/js/viewer3d.js');
+      mountViewer(viewer3d, { model: p.model_3d, size: /empresarial|grande/i.test(p.name + p.category) ? 1.35 : /mediano/i.test(p.name) ? 1.15 : 0.9 });
+    }
+  });
+} catch (e) { detail.innerHTML = `<div class="alert error">${esc(e.message)}</div>`; }
+});
+</script>
+</body>
+</html>

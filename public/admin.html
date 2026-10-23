@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de administración · Bee Green</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/img/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/admin.css">
+<script src="/vendor/leaflet/leaflet.js" defer></script>
+<script src="/js/admin.js" defer></script>
+</head>
+<body class="admin">
+  <section id="login" class="login hidden">
+    <form class="panel form" id="loginForm">
+      <img src="/img/logo/logo-oscuro.png" alt="Bee Green" style="height:90px;margin:0 auto">
+      <h2 class="center" style="margin:0">Panel de administración</h2>
+      <label>Contraseña<input type="password" name="password" required autofocus autocomplete="current-password"></label>
+      <p id="loginErr" class="alert error hidden"></p>
+      <button class="btn honey">Entrar</button>
+    </form>
+  </section>
+
+  <div id="app" class="admin-layout hidden">
+    <aside class="sidebar">
+      <a href="/" target="_blank" class="side-brand"><img src="/img/logo/logo-blanco.png" alt="Bee Green"></a>
+      <nav id="tabs">
+        <button data-tab="resumen" class="active">📊 Resumen</button>
+        <button data-tab="pedidos">🧾 Pedidos <span class="pill" id="n-orders"></span></button>
+        <button data-tab="productos">🐝 Productos</button>
+        <button data-tab="cupones">🏷️ Cupones</button>
+        <button data-tab="codigos">🔑 Códigos de hotel</button>
+        <button data-tab="mapa">🗺️ Mapa <span class="pill" id="n-hotels"></span></button>
+        <button data-tab="publicaciones">📰 Noticias y participaciones</button>
+        <button data-tab="bot">💬 Bot de dudas <span class="pill" id="n-bot"></span></button>
+        <button data-tab="mensajes">✉️ Mensajes <span class="pill" id="n-msgs"></span></button>
+        <button data-tab="suscriptores">📬 Suscriptores</button>
+        <button data-tab="ajustes">⚙️ Ajustes y pagos</button>
+      </nav>
+      <button class="btn small ghost logout" id="logout">Cerrar sesión</button>
+    </aside>
+    <main class="admin-main">
+      <button class="btn small side-toggle" id="sideToggle">☰ Menú</button>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <dialog id="modal"><form method="dialog" class="modal-close"><button aria-label="Cerrar">×</button></form><div id="modalBody"></div></dialog>
+  <div class="toast"></div>
+</body>
+</html>
