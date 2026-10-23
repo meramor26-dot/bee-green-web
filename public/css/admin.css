@@ -35,7 +35,7 @@ td .actions { display: flex; gap: 6px; flex-wrap: wrap; }
 .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; background: #eee; }
 .tag.nuevo, .tag.pending { background: #fff1cc; color: #7a5a00; }
 .tag.pagado, .tag.approved, .tag.entregado { background: var(--green-200); color: var(--green-900); }
-.tag.preparando, .tag.enviado { background: #e3e1f5; color: var(--indigo); }
+.tag.preparando, .tag.enviado { background: #fbeccc; color: #7a5a00; }
 .tag.cancelado, .tag.rejected { background: #fbe1dd; color: #8a2a1f; }
 .tag.off { background: #eee; color: #777; }
 dialog#modal { border: 0; border-radius: 20px; padding: 28px; width: min(720px, calc(100vw - 24px)); max-height: 90vh; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
