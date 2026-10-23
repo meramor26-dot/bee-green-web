@@ -26,7 +26,7 @@ Abre http://localhost:3000 y el admin en http://localhost:3000/admin. La primera
 
 La web es un servidor Node con base de datos SQLite y fotos en disco, así que el hosting necesita **un disco persistente**. Opciones sencillas:
 
-- **Render** (Web Service + Disk, unos USD 7–8 al mes): conecta el repositorio, comando `npm start`, agrega un disco montado en `/data` y las variables `ADMIN_PASSWORD`, `NODE_ENV=production`, `DB_FILE=/data/beegreen.db`, `UPLOAD_DIR=/data/uploads`.
+- **Render** (unos USD 7–8 al mes con disco): el repositorio trae `render.yaml`, así que en Render basta con **New › Blueprint**, elegir este repositorio y escribir la contraseña del admin (`ADMIN_PASSWORD`). Render crea el servicio y el disco en `/data`.
 - **Railway** o cualquier VPS con Docker: hay un `Dockerfile` listo; monta un volumen en `/data`.
 
 Después, en el panel del dominio, apunta `www.hotelesparaabejas.com` al hosting (registro CNAME que te da el hosting) y activa HTTPS.

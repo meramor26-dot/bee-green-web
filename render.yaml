@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: bee-green
+    runtime: node
+    plan: starter
+    region: ohio
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/stats
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_FILE
+        value: /data/beegreen.db
+      - key: UPLOAD_DIR
+        value: /data/uploads
+    disk:
+      name: datos
+      mountPath: /data
+      sizeGB: 1
