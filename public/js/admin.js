@@ -235,7 +235,7 @@ views.mapa = async (el) => {
   $('#bw').onsubmit = async (e) => { e.preventDefault(); await api('/api/admin/settings', { method: 'PUT', body: { blocked_words: e.target.blocked_words.value } }); toast('Palabras guardadas'); };
   if (!list.some((h) => h.status === 'pending')) $('#fs').value = '';
   const map = L.map('amap').setView([9.85, -84.1], 7);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap · © CARTO' }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(map);
   const color = { pending: '#e1aa2a', approved: '#193f3a', rejected: '#c0392b' };
   list.forEach((h) => L.circleMarker([h.lat, h.lng], { radius: 8, color: '#fff', weight: 2, fillColor: color[h.status], fillOpacity: 1 }).addTo(map).bindPopup(`<strong>${esc(h.company_name || h.name)}</strong><br>${esc(h.city || '')}`));
   const ST = { pending: 'Por aprobar', approved: 'Publicado', rejected: 'Rechazado' };

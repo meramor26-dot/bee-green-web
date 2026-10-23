@@ -74,7 +74,7 @@ if (qs) codeForm.requestSubmit();
 function initMap() {
   if (map) return setTimeout(() => map.invalidateSize(), 50);
   map = L.map(pickMap).setView([9.85, -84.1], 8);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap · © CARTO', maxZoom: 19 }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>', maxZoom: 19 }).addTo(map);
   map.on('click', (e) => setPoint(e.latlng.lat, e.latlng.lng));
   setTimeout(() => map.invalidateSize(), 100);
 }

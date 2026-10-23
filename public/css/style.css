@@ -402,3 +402,5 @@ main { padding-top: 0; }
 .mascot.wave { bottom: 60px; }
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } .hero2 { padding-top: 100px; min-height: 0; } .hero2-title .arc { margin-bottom: -14px; } }
+/* mapa con tonos suaves de la marca */
+.leaflet-tile-pane { filter: saturate(.75) sepia(.12) brightness(1.03); }

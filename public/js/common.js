@@ -209,7 +209,7 @@ const BG = (() => {
   }
   async function hotelMap(el, opts = {}) {
     const map = L.map(el, { scrollWheelZoom: false, ...opts }).setView([9.85, -84.1], 8);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap · © CARTO', maxZoom: 19 }).addTo(map);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>', maxZoom: 19 }).addTo(map);
     const hotels = await api('/api/hotels').catch(() => []);
     const markers = hotels.map((h) => L.marker([h.lat, h.lng], { icon: hotelIcon(h) }).addTo(map).bindPopup(
       `${h.photo ? `<img class="popup-photo" src="${esc(h.photo)}" alt="Hotel de ${esc(h.name)}">` : ''}${h.logo ? `<img class="popup-logo" src="${esc(h.logo)}" alt="${esc(h.company_name || '')}">` : ''}
