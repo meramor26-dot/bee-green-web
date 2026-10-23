@@ -2,7 +2,7 @@ services:
   - type: web
     name: bee-green
     runtime: node
-    plan: starter
+    plan: 0.5c-512mb
     region: ohio
     buildCommand: npm ci
     startCommand: npm start
