@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.BG)document.documentElement.classList.remove('js')},3000)</script>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/vendor/leaflet/leaflet.js" defer></script>
 <script src="/js/common.js" defer></script>
@@ -40,7 +41,7 @@
       <div><strong>Foto del hotel</strong><label class="dropzone" style="margin-top:6px"><span>📷 Elige o arrastra una foto</span><input type="file" name="photo" accept="image/*" hidden data-preview="photoPrev"><img id="photoPrev" class="hidden" alt=""></label></div>
       <div id="logoBox" class="hidden"><strong>Logo de la empresa</strong><label class="dropzone" style="margin-top:6px"><span>🏷️ Sube el logo (PNG o SVG)</span><input type="file" name="logo" accept="image/*" hidden data-preview="logoPrev"><img id="logoPrev" class="hidden" alt=""></label></div>
     </div>
-    <label class="check"><input type="checkbox" required> Acepto que mi nombre, foto y ubicación aproximada se muestren en el mapa público (<a href="/privacidad" target="_blank">privacidad</a>).</label>
+    <label class="check"><input type="checkbox" required><span>Acepto que mi nombre, foto y ubicación aproximada se muestren en el mapa público (<a href="/privacidad" target="_blank">privacidad</a>).</span></label>
     <p id="err" class="alert error hidden"></p>
     <button class="btn honey" id="sendBtn">Añadir mi hotel al mapa</button>
   </form>

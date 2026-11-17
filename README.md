@@ -35,6 +35,16 @@ Después, en el panel del dominio, apunta `www.hotelesparaabejas.com` al hosting
 
 Ver `.env.example`. La única obligatoria en producción es `ADMIN_PASSWORD`.
 
+## Avisos por WhatsApp (pedidos y mensajes nuevos)
+
+Cuando entra un pedido o un mensaje de contacto, la web puede avisar al WhatsApp de Bee Green con [CallMeBot](https://www.callmebot.com/blog/free-api-whatsapp-messages/) (gratis, no oficial).
+
+1. Sigue los pasos de esa página para activar tu número: te llega una clave (API key) por WhatsApp.
+2. En el hosting (Render › Environment) agrega `CALLMEBOT_PHONE` (con código de país, ej. `+50688887777`) y `CALLMEBOT_APIKEY`.
+3. Guarda; el servicio se reinicia y los avisos quedan activos.
+
+El aviso solo lleva el primer nombre, el total y el enlace al admin; el detalle se lee en `/admin`. Sin esas variables no se envía nada. Si CallMeBot falla, el pedido se guarda igual y el fallo queda en el registro del servidor.
+
 ## Cambiar ilustraciones
 
 Todas están en `public/img/` (mascotas, `euglossa-whatsapp.svg`, `bee.svg`, productos y noticias). Se pueden reemplazar por archivos con el mismo nombre (PNG transparente o SVG). Las fotos de productos y publicaciones se cambian desde el admin.

@@ -8,6 +8,7 @@
 <link rel="icon" href="/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.BG)document.documentElement.classList.remove('js')},3000)</script>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/common.js" defer></script>
 </head>
@@ -29,7 +30,7 @@
         <div class="row"><label>Provincia<select name="city" required><option value="">Elige…</option><option>San José</option><option>Alajuela</option><option>Cartago</option><option>Heredia</option><option>Guanacaste</option><option>Puntarenas</option><option>Limón</option></select></label><label>Cantón y distrito<input name="postal_code" required placeholder="Ej.: Escazú, San Rafael"></label></div>
         <label>Dirección exacta (otras señas)<textarea name="address" rows="2" required placeholder="Ej.: 200 m norte de la iglesia, casa verde de portón negro"></textarea></label>
         <label>Notas (opcional)<textarea name="notes" rows="2"></textarea></label>
-        <label class="check"><input type="checkbox" required> Acepto la <a href="/privacidad" target="_blank">política de privacidad</a> y las <a href="/envios" target="_blank">condiciones de envío</a></label>
+        <label class="check"><input type="checkbox" required><span>Acepto la <a href="/privacidad" target="_blank">política de privacidad</a> y las <a href="/envios" target="_blank">condiciones de envío</a></span></label>
         <h3 style="margin:8px 0 0">Método de pago</h3>
         <div class="pay-options" id="payOptions"></div>
         <p id="err" class="alert error hidden"></p>
@@ -45,7 +46,8 @@ const { esc, eur, api, cart } = BG;
 await BG.settingsReady;
 const s = BG.settings;
 const payText = { sinpe: 'Pagas al número de SINPE Móvil y nos envías el comprobante.', transferencia: 'Transfieres a nuestra cuenta IBAN y nos envías el comprobante.', tarjeta: 'Pagas con tarjeta de forma segura.' };
-payOptions.innerHTML = (s.payments || []).map((m, i) => `<label class="pay-option"><input type="radio" name="payment_method" value="${m.id}" ${i === 0 ? 'checked' : ''} required><span>${esc(m.label)}<small>${payText[m.id] || ''}</small></span></label>`).join('');
+payOptions.innerHTML = (s.payments || []).map((m, i) => `<label class="pay-option"><input type="radio" name="payment_method" value="${m.id}" ${i === 0 ? 'checked' : ''} required><span>${esc(m.label)}<small>${payText[m.id] || ''}</small></span></label>`).join('')
+  + `<div class="pay-option soon" aria-disabled="true"><input type="radio" disabled aria-hidden="true" tabindex="-1"><span>Tarjeta de crédito o débito <em class="soon-tag">Próximamente</em><small>Por ahora recibimos pagos por SINPE Móvil y transferencia bancaria.</small></span></div>`;
 function payDetails(m, r) {
   const ref = `Pedido #${r.order_id}`;
   if (m.id === 'sinpe') return `<dl class="pay-box"><dt>SINPE Móvil</dt><dd>${esc(m.number)}${m.name ? ` · a nombre de ${esc(m.name)}` : ''}</dd><dt>Monto</dt><dd>${eur(r.total_cents)}</dd><dt>Descripción</dt><dd>${ref}</dd></dl>`;
@@ -89,7 +91,7 @@ checkout.onsubmit = async (e) => {
     cartWrap.classList.add('hidden'); done.classList.remove('hidden');
     done.innerHTML = `<img src="/img/bee.svg" alt="" style="width:80px;margin:0 auto" class="float"><h2>¡Pedido #${r.order_id} recibido!</h2><p class="lead" style="margin-inline:auto">Gracias, ${esc(data.name)}. Total: <strong>${eur(r.total_cents)}</strong>. ${r.payment.id === 'tarjeta' ? '' : 'Para completar tu compra, haz el pago y envíanos el comprobante por WhatsApp.'}</p>
       ${payDetails(r.payment, r)}
-      <div class="btn-row" style="justify-content:center;margin-top:20px"><a class="btn" style="background:#25d366" target="_blank" rel="noopener" href="${BG.waLink(text)}">${r.payment.id === 'tarjeta' ? 'Confirmar por WhatsApp' : 'Enviar comprobante por WhatsApp'}</a><a class="btn ghost" href="/registra-tu-hotel">Cómo registrar mi hotel</a></div>`;
+      <div class="btn-row" style="justify-content:center;margin-top:20px"><a class="btn whatsapp" target="_blank" rel="noopener" href="${BG.waLink(text)}">${r.payment.id === 'tarjeta' ? 'Confirmar por WhatsApp' : 'Enviar comprobante por WhatsApp'}</a><a class="btn ghost" href="/registra-tu-hotel">Cómo registrar mi hotel</a></div>`;
     scrollTo({ top: 0, behavior: 'smooth' });
   } catch (x) { err.textContent = x.message; err.classList.remove('hidden'); }
   submitBtn.disabled = false;

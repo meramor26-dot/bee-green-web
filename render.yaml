@@ -16,6 +16,12 @@ services:
         sync: false
       - key: SESSION_SECRET
         generateValue: true
+      - key: CALLMEBOT_PHONE
+        sync: false
+      - key: CALLMEBOT_APIKEY
+        sync: false
+      - key: SITE_URL
+        value: https://www.hotelesparaabejas.com
       - key: DB_FILE
         value: /data/beegreen.db
       - key: UPLOAD_DIR
