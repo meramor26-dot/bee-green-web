@@ -8,6 +8,7 @@
 <link rel="icon" href="/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.BG)document.documentElement.classList.remove('js')},3000)</script>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/common.js" defer></script>
 </head>
@@ -16,9 +17,9 @@
 <section class="page-head" data-bees="10"><div class="container" style="position:relative;z-index:1"><span class="eyebrow">Hablemos</span><h1>Contacto</h1><p class="lead" style="margin-inline:auto">Para pedidos, empresas, escuelas, talleres o cualquier duda. Respondemos rapidísimo por WhatsApp.</p></div></section>
 <section class="section" style="padding-top:10px"><div class="container grid grid-2" style="align-items:start">
   <div class="panel center">
-    <div class="wa-float" style="position:static;margin:0 auto 16px;width:80px;height:80px" aria-hidden="true"></div>
+    <div class="wa-float" style="position:relative;inset:auto;margin:0 auto 16px;width:80px;height:80px" aria-hidden="true"></div>
     <h3>WhatsApp directo</h3><p class="muted">La forma más rápida de hablar con nosotros.</p>
-    <a class="btn" style="background:#25d366" href="#" data-wa>Abrir WhatsApp</a>
+    <a class="btn whatsapp" href="#" data-wa>Abrir WhatsApp</a>
     <p style="margin-top:24px" id="emailLine" class="muted"></p>
   </div>
   <form class="panel form" id="contactForm">
@@ -26,7 +27,7 @@
     <label>Nombre<input name="name" required></label>
     <label>Correo<input type="email" name="email" required></label>
     <label>Mensaje<textarea name="message" rows="5" required></textarea></label>
-    <label class="check"><input type="checkbox" required> Acepto la <a href="/privacidad" target="_blank">política de privacidad</a></label>
+    <label class="check"><input type="checkbox" required><span>Acepto la <a href="/privacidad" target="_blank">política de privacidad</a></span></label>
     <button class="btn honey">Enviar mensaje</button>
   </form>
 </div></section>

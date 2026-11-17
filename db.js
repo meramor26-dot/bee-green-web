@@ -94,10 +94,13 @@ if (!db.prepare('SELECT 1 FROM faqs LIMIT 1').get()) {
     ['¿Qué mantenimiento necesita?', 'Muy poco. Cuando veas tubos sellados, déjalos tranquilos hasta que salgan las nuevas abejas. Los tubos vacíos o con hongos cámbialos una vez al año. Y evita usar insecticidas cerca del hotel.', 'mantenimiento limpiar limpieza cuidar cambiar tubos hongos insecticida', 7],
     ['¿Cómo marco mi hotel en el mapa?', 'Cada hotel trae un código. Entra en "Registra tu hotel", escribe el código, marca en el mapa dónde lo colocaste y sube una foto. Después de una revisión rápida aparece en el mapa de la comunidad.', 'mapa codigo registrar marcar foto subir comunidad', 8],
     ['Somos una empresa, ¿podemos aparecer con nuestro logo?', '¡Claro! Con los códigos de empresa (empiezan por EMP-) su hotel aparece en el mapa con el logo de la empresa. Escríbenos por WhatsApp y les preparamos un paquete para su oficina, hotel, finca, colegio o evento.', 'empresa logo marca corporativo oficina rse colegio institucion', 9],
-    ['¿Cómo puedo pagar?', 'Puedes pagar por SINPE Móvil, transferencia bancaria o tarjeta. Al finalizar la compra eliges el método y te mostramos los datos. Si pagas por SINPE o transferencia, envíanos el comprobante por WhatsApp.', 'pagar pago sinpe transferencia tarjeta credito debito metodo', 10],
+    ['¿Cómo puedo pagar?', 'Puedes pagar por SINPE Móvil o transferencia bancaria (el pago con tarjeta estará disponible próximamente). Al finalizar la compra eliges el método y te mostramos los datos. Si pagas por SINPE o transferencia, envíanos el comprobante por WhatsApp.', 'pagar pago sinpe transferencia tarjeta credito debito metodo', 10],
     ['¿Hacen envíos? ¿Cuánto tardan?', 'Enviamos a todo Costa Rica por Correos de Costa Rica o mensajería, normalmente en 2 a 5 días hábiles. El envío es gratis en compras desde ₡40 000.', 'envio entrega tarda dias gastos gratis correos mensajeria', 11],
     ['¿Dan talleres?', '¡Sí! Damos talleres abiertos y privados para empresas, colegios y grupos, donde cada persona arma su hotel y aprende sobre las abejas nativas. Mira las fechas en la sección Talleres o escríbenos por WhatsApp.', 'taller talleres curso clase capacitacion actividad grupo', 12],
   ].forEach((r) => f.run(...r));
 }
+
+// Pago con tarjeta «Próximamente»: actualiza la respuesta de ejemplo si nadie la ha editado.
+db.prepare("UPDATE faqs SET answer = replace(answer, 'SINPE Móvil, transferencia bancaria o tarjeta.', 'SINPE Móvil o transferencia bancaria (el pago con tarjeta estará disponible próximamente).') WHERE answer LIKE '%SINPE Móvil, transferencia bancaria o tarjeta.%'").run();
 
 module.exports = db;

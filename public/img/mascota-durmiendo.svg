@@ -6,4 +6,4 @@
 <path d="M96 104 q8 7 16 0" fill="none"/><path d="M122 104 q8 7 16 0" fill="none"/><path d="M110 122 q6 4 12 0" fill="none"/>
 <path d="M84 86 C70 70 66 56 70 44" fill="none"/><circle cx="70" cy="42" r="6" fill="#2b2561"/></g>
 <g fill="#2b2561" font-family="Arial Black, sans-serif" font-weight="900"><text x="40" y="60" font-size="26">z</text><text x="20" y="34" font-size="20">z</text><text x="6" y="14" font-size="14">z</text></g>
-<ellipse cx="96" cy="120" rx="8" ry="5" fill="#eedcd2"/></svg>
+<ellipse cx="96" cy="120" rx="8" ry="5" fill="#ebe5d3"/></svg>

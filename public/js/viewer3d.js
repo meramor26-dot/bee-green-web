@@ -66,7 +66,7 @@ export function mountViewer(el, { model, size = 1 } = {}) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
   camera.position.set(3.2, 2.2, 4.4);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xeedcd2, 1.6));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xebe5d3, 1.6));
   const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(4, 6, 5); scene.add(sun);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.6;

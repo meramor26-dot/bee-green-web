@@ -129,7 +129,7 @@ const BG = (() => {
   }
   const PAY_ICONS = `<span class="pay-icon" title="SINPE Móvil"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="4" width="22" height="40" rx="4"/><path d="M21 38h6"/><path d="M18 17h12l-3-3M30 25H18l3 3"/></svg>SINPE Móvil</span>
     <span class="pay-icon" title="Transferencia bancaria"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 24 7l18 11z"/><path d="M10 22v14M19 22v14M29 22v14M38 22v14M6 40h36"/></svg>Transferencia</span>
-    <span class="pay-icon" title="Tarjeta de crédito o débito"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="40" height="28" rx="4"/><path d="M4 18h40M10 30h10"/></svg>Tarjeta</span>`;
+    <span class="pay-icon" title="Tarjeta de crédito o débito: próximamente"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="40" height="28" rx="4"/><path d="M4 18h40M10 30h10"/></svg>Tarjeta (próximamente)</span>`;
   function footer() {
     return `<footer class="site-footer">
       <svg class="footer-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 70 C200 10 420 0 640 50 S1100 120 1440 30 V121 H0 Z" fill="currentColor"/></svg>
@@ -156,9 +156,9 @@ const BG = (() => {
     wrap.innerHTML = `
       <button class="bot-toggle" aria-label="Abrir el asistente de dudas">${BEE}<span class="label">¿Dudas? Pregúntame</span></button>
       <section class="bot closed" aria-label="Asistente Bee Green" role="dialog">
-        <div class="bot-head">${BEE}<div><strong>Abi</strong><small>La abeja que resuelve tus dudas</small></div><button aria-label="Cerrar">×</button></div>
+        <div class="bot-head">${BEE}<div><strong>Abi</strong><small>La abeja que resuelve tus dudas</small></div><button aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
         <div class="bot-msgs" aria-live="polite"></div>
-        <form class="bot-form"><input name="q" placeholder="Escribe tu pregunta…" autocomplete="off" aria-label="Tu pregunta" maxlength="500"><button aria-label="Enviar">➤</button></form>
+        <form class="bot-form"><input name="q" placeholder="Escribe tu pregunta…" autocomplete="off" aria-label="Tu pregunta" maxlength="500"><button aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
       </section>`;
     document.body.appendChild(wrap);
     const panel = wrap.querySelector('.bot'), msgs = wrap.querySelector('.bot-msgs'), form = wrap.querySelector('.bot-form');
@@ -170,7 +170,7 @@ const BG = (() => {
       try {
         const [r] = await Promise.all([api('/api/bot', { method: 'POST', body: { question: q, faq_id: faqId } }), new Promise((ok) => setTimeout(ok, 500))]);
         t.remove();
-        add(esc(r.answer) + (r.whatsapp ? `<div style="margin-top:8px"><a class="btn small" style="background:#25d366" target="_blank" rel="noopener" href="${waLink('Hola, tengo una duda: ' + q)}">Preguntar por WhatsApp</a></div>` : ''));
+        add(esc(r.answer) + (r.whatsapp ? `<div style="margin-top:8px"><a class="btn small whatsapp" target="_blank" rel="noopener" href="${waLink('Hola, tengo una duda: ' + q)}">Preguntar por WhatsApp</a></div>` : ''));
       } catch (e) { t.remove(); add(esc(e.message)); }
     }
     async function start() {
@@ -189,6 +189,7 @@ const BG = (() => {
   }
 
   function reveal() {
+    if (!('IntersectionObserver' in window)) { document.documentElement.classList.remove('js'); return; }
     const io = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }), { threshold: .12 });
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
   }

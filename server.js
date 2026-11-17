@@ -7,6 +7,7 @@ const multer = require('multer');
 const db = require('./db');
 const moderation = require('./moderation');
 
+const notify = require('./notify');
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'beegreen-admin';
 const SECRET = process.env.SESSION_SECRET || crypto.createHash('sha256').update('bg:' + ADMIN_PASSWORD).digest('hex');
@@ -68,11 +69,13 @@ const finalPrice = (p) => Math.round(p.price_cents * (100 - (p.discount_percent 
 const bool = (v) => (v === true || v === 'true' || v === '1' || v === 1 || v === 'on' ? 1 : 0);
 const clean = (s, max = 2000) => String(s ?? '').trim().slice(0, max);
 
+const CARD_SOON = true;
 function paymentInfo(s) {
   const out = [];
   if (s.sinpe_number) out.push({ id: 'sinpe', label: 'SINPE Móvil', number: s.sinpe_number, name: s.sinpe_name || '' });
   if (s.bank_iban) out.push({ id: 'transferencia', label: 'Transferencia bancaria', bank: s.bank_name || '', iban: s.bank_iban, holder: s.bank_holder || '' });
-  if (s.card_enabled === '1') out.push({ id: 'tarjeta', label: 'Tarjeta de crédito o débito', link: s.card_link || '' });
+  // Pago con tarjeta: «Próximamente». Para activarlo, poner CARD_SOON en false (y conectar la pasarela).
+  if (!CARD_SOON && s.card_enabled === '1') out.push({ id: 'tarjeta', label: 'Tarjeta de crédito o débito', link: s.card_link || '' });
   return out;
 }
 function getSettings() {
@@ -244,6 +247,7 @@ app.post('/api/orders', rateLimit(10, 10 * 60000), wrap((req, res) => {
     for (const l of lines) db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?').run(l.qty, l.id);
     if (coupon && discount) db.prepare('UPDATE coupons SET uses = uses + 1 WHERE code = ?').run(coupon.code);
     db.exec('COMMIT');
+    notify.newOrder(req, { id: r.lastInsertRowid, name: b.name, units: lines.reduce((n, l) => n + l.qty, 0), total_cents: total, payment: pay.label });
     res.json({ ok: true, order_id: r.lastInsertRowid, payment: pay, items: lines, subtotal_cents: subtotal, discount_cents: discount, shipping_cents: shipping, total_cents: total });
   } catch (e) { db.exec('ROLLBACK'); throw e; }
 }));
@@ -259,6 +263,7 @@ app.post('/api/contact', rateLimit(5, 10 * 60000), (req, res) => {
   const b = req.body || {};
   if (!clean(b.name) || !clean(b.email) || !clean(b.message)) return res.status(400).json({ error: 'Completa todos los campos.' });
   db.prepare('INSERT INTO messages (name, email, message) VALUES (?,?,?)').run(clean(b.name, 120), clean(b.email, 200), clean(b.message, 3000));
+  notify.newMessage(req, { name: b.name });
   res.json({ ok: true });
 });
 
